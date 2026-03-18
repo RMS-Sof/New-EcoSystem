@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EcoSystem 2026 | Portal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    /* ══════════════════════════════════════════════════════
+       CORE STYLES
+    ══════════════════════════════════════════════════════ */
+    :root {
+      --moss:   #2d4a22;
+      --fern:   #4a7c3f;
+      --leaf:   #6aab5e;
+      --sage:   #a8c5a0;
+      --cream:  #f4f0e6;
+      --bark:   #3b2a1a;
+      --soil:   #7a5c3a;
+      --mist:   #e8f0e5;
+      --white:  #ffffff;
+      --shadow: rgba(45,74,34,.18);
+      --photo-w: 288px;
+      --photo-h: 384px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+    }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--bark);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── BANNER ─────────────────────────────────────────────── */
+    header {
+      flex-shrink: 0;
+      background: linear-gradient(135deg, var(--moss) 0%, var(--fern) 55%, var(--leaf) 100%);
+      padding: 0 2rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 3px 18px var(--shadow);
+    }
+    header::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 60% 80% at 80% 50%, rgba(106,171,94,.22) 0%, transparent 70%),
+        url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E");
+    }
+    .banner-inner {
+      position: relative;
+      display: flex; align-items: center; gap: 1rem;
+      padding: .85rem 0;
+    }
+    .banner-icon { font-size: 2.1rem; flex-shrink: 0; filter: drop-shadow(0 2px 6px rgba(0,0,0,.3)); }
+    .banner-text h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.25rem, 2.2vw, 1.9rem);
+      font-weight: 900; color: var(--white);
+      letter-spacing: -.3px; line-height: 1.1;
+      text-shadow: 0 2px 10px rgba(0,0,0,.22);
+    }
+    .banner-text p { color: var(--mist); font-size: .85rem; font-weight: 400; margin-top: .12rem; }
+    .banner-badge {
+      margin-left: auto;
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.22);
+      color: var(--white); padding: .3rem .85rem; border-radius: 50px;
+      font-size: .68rem; font-weight: 500; letter-spacing: .8px;
+      text-transform: uppercase; backdrop-filter: blur(6px); white-space: nowrap;
+    }
+
+    /* ── SEARCH BAR ─────────────────────────────────────────── */
+    .search-bar-wrap {
+      flex-shrink: 0;
+      background: var(--moss);
+      padding: .5rem 2rem;
+      display: flex; justify-content: center;
+      border-bottom: 2px solid var(--fern);
+    }
+    .search-container {
+      display: flex; align-items: center;
+      background: var(--white); border-radius: 50px;
+      overflow: hidden; width: 100%; max-width: 540px;
+      box-shadow: 0 2px 10px rgba(0,0,0,.18);
+      border: 2px solid transparent; transition: border-color .2s;
+    }
+    .search-container:focus-within { border-color: var(--leaf); }
+    .search-icon { padding: 0 .65rem 0 .9rem; color: var(--fern); font-size: .95rem; flex-shrink: 0; }
+    #searchInput {
+      flex: 1; border: none; outline: none;
+      font-family: 'DM Sans', sans-serif; font-size: .85rem; color: var(--bark);
+      padding: .46rem 0; background: transparent;
+    }
+    #searchInput::placeholder { color: #aab; }
+    #voiceBtn {
+      background: var(--fern); border: none; color: var(--white);
+      padding: .46rem .85rem; cursor: pointer;
+      display: flex; align-items: center; gap: .28rem;
+      font-family: 'DM Sans', sans-serif; font-size: .74rem; font-weight: 500;
+      transition: background .2s; white-space: nowrap;
+    }
+    #voiceBtn:hover { background: var(--leaf); }
+    #voiceBtn.listening { background: #c0392b; animation: pulse .9s infinite; }
+    @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
+    .mic-dot { width: 6px; height: 6px; background: var(--white); border-radius: 50%; }
+    #voiceBtn.listening .mic-dot { animation: blink .6s infinite alternate; }
+    @keyframes blink { to{opacity:.15} }
+    #voiceStatus {
+      text-align: center; color: var(--sage);
+      font-size: .7rem; margin-top: .18rem; min-height: .85em;
+    }
+
+    /* ── MAIN CONTAINER ──────────────────────────────────────── */
+    main {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* ── PANELS ──────────────────────────────────────────────── */
+    .panel {
+      overflow-y: auto;
+      overflow-x: hidden;
+      min-width: 120px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--sage) transparent;
+    }
+    .panel::-webkit-scrollbar { width: 5px; }
+    .panel::-webkit-scrollbar-thumb { background: var(--sage); border-radius: 4px; }
+
+    #panelLeft {
+      background: var(--mist);
+      display: flex; flex-direction: column;
+      padding: .85rem .8rem; gap: .8rem;
+    }
+    #panelMid {
+      background: #f0f5ee;
+      padding: .85rem .75rem;
+      overflow-y: scroll;
+      scrollbar-width: auto;
+      scrollbar-color: var(--fern) #d4e8ce;
+    }
+    #panelMid::-webkit-scrollbar { width: 8px; }
+    #panelMid::-webkit-scrollbar-track { background: #d4e8ce; }
+    #panelMid::-webkit-scrollbar-thumb { background: var(--fern); border-radius: 4px; }
+
+    #panelRight {
+      background: var(--cream);
+      padding: 1rem 1.1rem;
+      display: flex; flex-direction: column; gap: .85rem;
+    }
+
+    /* ── DRAG DIVIDERS ───────────────────────────────────────── */
+    .divider {
+      width: 6px; flex-shrink: 0; cursor: col-resize;
+      background: #c9dcc4; position: relative;
+      transition: background .15s; user-select: none;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .divider:hover, .divider.dragging { background: var(--leaf); }
+    .divider::after { content: '⋮'; color: rgba(45,74,34,.45); font-size: .9rem; letter-spacing: -1px; pointer-events: none; }
+    .divider:hover::after, .divider.dragging::after { color: var(--moss); }
+
+    /* ── PHOTO PLACEHOLDER (3"×4") ───────────────────────────── */
+    .photo-placeholder {
+      width: var(--photo-w); height: var(--photo-h); max-width: 100%;
+      flex-shrink: 0; border-radius: 11px; overflow: hidden; position: relative;
+      border: 2px solid rgba(106,171,94,.38); box-shadow: 0 4px 16px var(--shadow);
+      align-self: center;
+    }
+    .photo-placeholder img { width: 100%; height: 100%; display: block; object-fit: cover; }
+    .photo-label {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: rgba(45,74,34,.65); color: var(--white);
+      text-align: center; padding: .35rem; font-size: .7rem; font-weight: 500;
+      letter-spacing: .3px; backdrop-filter: blur(4px);
+    }
+
+    .intro-card {
+      background: var(--white); border-radius: 9px;
+      padding: .8rem .9rem; border: 1px solid #d5e8d0;
+      box-shadow: 0 1px 8px var(--shadow); flex-shrink: 0;
+    }
+    .intro-card h2 { font-family: 'Playfair Display', serif; font-size: .95rem; color: var(--moss); margin-bottom: .35rem; font-weight: 700; }
+    .intro-card p { font-size: .78rem; color: var(--soil); line-height: 1.62; }
+
+    /* ── TREE ────────────────────────────────────────────────── */
+    .tree-heading {
+      font-family: 'Playfair Display', serif; font-size: .75rem; font-weight: 700;
+      color: var(--soil); letter-spacing: 1px; text-transform: uppercase;
+      margin-bottom: .55rem; padding-bottom: .32rem; border-bottom: 1px solid #c9dcc4;
+    }
+    .tree ul { list-style: none; padding: 0; margin: 0; }
+    .tree li { position: relative; }
+    .tree > ul > li > .node-row {
+      background: var(--fern); color: var(--white);
+      border-radius: 6px; font-weight: 600; font-size: .84rem;
+    }
+    .tree > ul > li > .node-row:hover { background: var(--moss); }
+    .tree > ul > li > ul > li > .node-row {
+      background: rgba(106,171,94,.14); color: var(--moss);
+      border-radius: 5px; font-weight: 600; margin-left: 7px; font-size: .8rem;
+    }
+    .tree > ul > li > ul > li > .node-row:hover { background: rgba(106,171,94,.27); }
+    .node-row {
+      display: flex; align-items: center; gap: .38rem;
+      padding: .4rem .5rem; cursor: pointer; user-select: none;
+      transition: background .14s; margin-bottom: 3px;
+    }
+    .toggle-icon { font-style: normal; font-size: .62rem; width: .85em; flex-shrink: 0; display: inline-block; transition: transform .2s; }
+    .node-label { flex: 1; }
+    .sub-tree { overflow: hidden; max-height: 0; transition: max-height .35s ease; }
+    .sub-tree.open { max-height: 5000px; }
+    .leaf-link {
+      display: flex; align-items: flex-start; gap: .35rem;
+      padding: .35rem .35rem .35rem 2.2rem;
+      font-size: .75rem; color: var(--fern); text-decoration: none;
+      border-radius: 4px; margin-bottom: 1px; line-height: 1.3;
+      transition: background .12s, color .12s;
+    }
+    .leaf-link:hover { background: rgba(106,171,94,.17); color: var(--moss); text-decoration: underline; }
+    .leaf-link::before { content: '↗'; font-size: .62rem; opacity: .52; margin-top: 2px; }
+    
+    .hidden-filter { display: none !important; }
+
+    /* ── RIGHT CONTENT ───────────────────────────────────────── */
+    .stats-row { display: grid; grid-template-columns: repeat(3,1fr); gap: .65rem; }
+    .stat-card {
+      background: var(--white); border-radius: 9px; padding: .75rem .9rem;
+      border: 1px solid #d5e8d0; text-align: center;
+      box-shadow: 0 1px 7px var(--shadow); transition: transform .18s, box-shadow .18s;
+    }
+    .stat-card:hover { transform: translateY(-2px); box-shadow: 0 5px 14px var(--shadow); }
+    .stat-num { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 900; color: var(--fern); }
+    .stat-label { font-size: .72rem; color: var(--soil); margin-top: .12rem; font-weight: 500; }
+
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .65rem; }
+    .info-card { background: var(--white); border-radius: 9px; padding: .78rem .9rem; border: 1px solid #d5e8d0; box-shadow: 0 1px 7px var(--shadow); }
+    .info-card h4 { font-family: 'Playfair Display', serif; font-size: .88rem; color: var(--moss); margin-bottom: .3rem; }
+    .info-card p { font-size: .77rem; color: var(--soil); line-height: 1.58; }
+
+    /* ── FOOTER ──────────────────────────────────────────────── */
+    footer {
+      flex-shrink: 0; background: var(--bark); color: var(--sage);
+      padding: .5rem 2rem; display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: .4rem; font-size: .72rem;
+    }
+    footer .footer-brand { font-family: 'Playfair Display', serif; color: var(--white); font-size: .84rem; font-weight: 700; }
+    footer .footer-links { display: flex; gap: 1rem; }
+    footer .footer-links a { color: var(--sage); text-decoration: none; transition: color .15s; }
+    footer .footer-links a:hover { color: var(--leaf); }
+    footer .footer-copy { opacity: .68; }
+
+    body.col-resizing { cursor: col-resize !important; }
+    body.col-resizing * { pointer-events: none !important; user-select: none !important; }
+    body.col-resizing .divider { pointer-events: auto !important; }
+
+    /* ══════════════════════════════════════════════════════
+       CHATBOT STYLES
+    ══════════════════════════════════════════════════════ */
+    #eco-chat-fab {
+      position: fixed; bottom: 28px; right: 28px; z-index: 9999;
+      width: 62px; height: 62px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--fern), var(--moss)); border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 6px 28px rgba(45,74,34,0.45), 0 2px 8px rgba(0,0,0,0.3);
+      transition: transform 0.3s cubic-bezier(.2,.8,.2,1), box-shadow 0.3s ease;
+      animation: fabPop 0.5s cubic-bezier(.2,.8,.2,1) both;
+    }
+    @keyframes fabPop { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    #eco-chat-fab:hover { transform: scale(1.12); box-shadow: 0 10px 36px rgba(45,74,34,0.55), 0 4px 12px rgba(0,0,0,0.4); }
+    #eco-chat-fab svg { transition: transform 0.4s ease; }
+    #eco-chat-fab.open svg.chat-icon  { display: none; }
+    #eco-chat-fab.open svg.close-icon { display: block !important; }
+    #eco-chat-fab::after {
+      content: ''; position: absolute; top: 4px; right: 4px;
+      width: 13px; height: 13px; border-radius: 50%; background: #6aab5e;
+      border: 2px solid #2d4a22; animation: blinkFab 2.5s infinite;
+    }
+    #eco-chat-fab.open::after { display: none; }
+    @keyframes blinkFab { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+    #eco-chat-panel {
+      position: fixed; bottom: 102px; right: 28px; z-index: 9998;
+      width: 380px; max-height: 580px; height: calc(100vh - 140px); border-radius: 16px;
+      background: var(--white); border: 1px solid var(--sage);
+      box-shadow: 0 15px 40px rgba(45,74,34,0.25), 0 0 20px rgba(0,0,0,0.1);
+      display: flex; flex-direction: column; overflow: hidden;
+      transform: scale(0.85) translateY(30px); opacity: 0; pointer-events: none;
+      transition: transform 0.35s cubic-bezier(.2,.8,.2,1), opacity 0.3s ease; transform-origin: bottom right;
+    }
+    #eco-chat-panel.visible { transform: scale(1) translateY(0); opacity: 1; pointer-events: all; }
+
+    .eco-chat-header {
+      padding: 16px; background: linear-gradient(135deg, var(--fern), var(--moss));
+      display: flex; align-items: center; gap: 12px; flex-shrink: 0;
+    }
+    .eco-chat-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--leaf); display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; box-shadow: 0 0 10px rgba(0,0,0,0.2); flex-shrink: 0;
+    }
+    .eco-chat-header-text { flex: 1; min-width: 0; }
+    .eco-chat-header-text h4 { font-size: 0.95rem; font-weight: 700; color: var(--white); margin: 0 0 2px; }
+    .eco-chat-header-text span { font-size: 0.75rem; color: var(--mist); display: flex; align-items: center; gap: 5px; }
+    .eco-status-dot {
+      width: 7px; height: 7px; border-radius: 50%; background: #a8c5a0;
+      display: inline-block; box-shadow: 0 0 6px #a8c5a0; animation: blinkFab 2.5s infinite;
+    }
+    .eco-chat-clear-btn {
+      background: none; border: none; color: var(--mist); cursor: pointer; font-size: 0.75rem;
+      padding: 4px 8px; border-radius: 8px; transition: all 0.2s; flex-shrink: 0;
+    }
+    .eco-chat-clear-btn:hover { color: #fff; background: rgba(255,255,255,0.15); }
+
+    #eco-chat-messages {
+      flex: 1; overflow-y: auto; padding: 16px 14px;
+      display: flex; flex-direction: column; gap: 10px; background: #f9fbf8;
+    }
+    #eco-chat-messages::-webkit-scrollbar { width: 5px; }
+    #eco-chat-messages::-webkit-scrollbar-thumb { background: var(--sage); border-radius: 4px; }
+
+    .eco-msg {
+      max-width: 85%; padding: 10px 14px; border-radius: 12px;
+      font-size: 0.85rem; line-height: 1.5; animation: msgIn 0.3s cubic-bezier(.2,.8,.2,1) both; word-break: break-word;
+    }
+    @keyframes msgIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .eco-msg.bot { align-self: flex-start; background: #e8f0e5; color: var(--bark); border: 1px solid #d4e8ce; border-bottom-left-radius: 4px; }
+    .eco-msg.user { align-self: flex-end; background: var(--fern); color: var(--white); border-bottom-right-radius: 4px; box-shadow: 0 4px 10px rgba(74,124,63,0.2); }
+    .eco-msg a { color: var(--fern); text-decoration: underline; }
+    .eco-msg.user a { color: #d4e8ce; }
+
+    .eco-typing {
+      align-self: flex-start; background: #e8f0e5; border: 1px solid #d4e8ce;
+      border-radius: 12px; border-bottom-left-radius: 4px; padding: 12px 18px;
+      display: flex; gap: 5px; align-items: center; animation: msgIn 0.3s ease both;
+    }
+    .eco-typing span { width: 7px; height: 7px; background: var(--leaf); border-radius: 50%; animation: typeBounce 1.2s infinite; }
+    .eco-typing span:nth-child(2) { animation-delay: 0.2s; }
+    .eco-typing span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes typeBounce { 0%,80%,100% { transform: translateY(0); opacity: 0.5; } 40% { transform: translateY(-6px); opacity: 1; } }
+
+    .eco-chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 2px 0 4px; align-self: flex-start; }
+    .eco-chip {
+      background: var(--white); border: 1px solid var(--sage); color: var(--fern);
+      border-radius: 20px; padding: 5px 12px; font-size: 0.75rem; cursor: pointer; transition: all 0.2s ease;
+    }
+    .eco-chip:hover { background: var(--mist); color: var(--moss); border-color: var(--fern); transform: translateY(-1px); }
+
+    .eco-chat-footer {
+      padding: 12px 14px 14px; border-top: 1px solid #d5e8d0; background: var(--white);
+      display: flex; gap: 8px; align-items: flex-end; flex-shrink: 0;
+    }
+    #eco-chat-input {
+      flex: 1; background: #f9fbf8; border: 1px solid var(--sage); border-radius: 14px;
+      color: var(--bark); padding: 10px 14px; font-size: 0.85rem; outline: none; resize: none;
+      min-height: 42px; max-height: 110px; line-height: 1.4; font-family: inherit; transition: border-color 0.3s;
+    }
+    #eco-chat-input:focus { border-color: var(--fern); box-shadow: 0 0 0 3px rgba(106,171,94,0.15); }
+    #eco-chat-send {
+      width: 42px; height: 42px; border-radius: 12px; background: var(--fern); border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: transform 0.2s, box-shadow 0.2s;
+    }
+    #eco-chat-send:hover:not(:disabled) { transform: scale(1.05); box-shadow: 0 4px 12px rgba(74,124,63,0.4); }
+    #eco-chat-send:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+    #eco-chat-send svg { width: 18px; height: 18px; }
+
+  </style>
+</head>
+<body>
+
+<div id="hidden-data-source" style="display: none;">
+  <div class="card"><div class="icon">🔒</div><h2 class="card-title">Ideation & Feedback</h2><div class="links-section"><a href="https://docs.google.com/document/d/1tYExkgcirqx9sW1ogmsP6Ir47vBIOXeasuVIYc0G5jo/edit?usp=sharing" class="link-item">A brief introduction to EcoSystem</a><a href="https://drive.google.com/file/d/1sIG0DJ4pVMEnCjhA6iWgMznBFDzcPBqz/view?usp=sharing" class="link-item">इकोसिस्टिम २०२६ - मराठीतून ओळख</a><a href="https://script.google.com/macros/s/AKfycbyU5_GsvOnqekKqvzl0dhVMR-zmHADQlAl8X03Nlk3DC2GL-97EdG_TMq4xCIzpbOoc5A/exec" class="link-item">Schedule an appointment with Rahul</a><a href="https://script.google.com/macros/u/1/s/AKfycbxGjLmRWBSVMcPyjkGm347aQ7Sk_kqBjhGABKcMSkBQcMV4DfNh5MfuvCKRVQoLTZM/exec" class="link-item">Minutes of the Meetings</a><a href="https://forms.gle/v12gqr4TcRCrnXHx6" class="link-item">Give feedback to make your EcoSystem 2026 better</a><a href="https://script.google.com/macros/s/AKfycbzg61qEsbHp_GoMcC0TfS2PFc-wULBpK9DdLyrLsPcTkGDQqWhDBXt_1Z0YceYSgAR9MA/exec" class="link-item">Leave Sanction System - IT Students</a><a href="https://script.google.com/macros/s/AKfycbz2ntoxSg_UZnpwHOGy24salxjy0M7S-Ah-a3izbS0ngDPOBXxpzp4sM_gv8w33zHhw/exec" class="link-item">Minutes of Meeting MOM system</a><a href="https://docs.google.com/presentation/d/1q0uj6WFhEyIu0OjAUSAsaz-ZGhdyWaclLpX6W3q1v5w/edit?usp=sharing" class="link-item">NBNSTIC IT Progress Book (प्रगती पुस्तक)</a><a href="https://script.google.com/macros/s/AKfycbyY9nciONqljNLQa6FkgZii5LDC-ZtX7CPKNQfopGIlyf4qxQF6F8nYRp5JGlGqMGUz/exec" class="link-item">Rate your IT Department</a><a href="https://forms.gle/JRVFWbPZZei44Jjo6" class="link-item">Register to receive Happy Birthday Card from your IT Dept.</a></div></div>
+  <div class="card"><div class="icon">📅</div><h2 class="card-title">Online Submissions</h2><div class="links-section"><a href="https://rms-sof.github.io/BE-Sem-7-Progress-Tracker/" class="link-item">BE Sem 7 Track your Academic progress throughout the semester.</a><a href="https://drive.google.com/file/d/1gKKSbTaKW54DvbKZOnMVcRi5uZsHgffb/view?usp=sharing" class="link-item">Know about BE VII Information & Storage Retrieval (ISR) Theory Assignemnts.</a><a href="https://drive.google.com/file/d/17vZUiXscrfWD6wRzwdPB1puHyOKg0Dnv/view?usp=sharing" class="link-item">Know about BE VII Deep Learning (DL) Theory Assignments.</a><a href="https://drive.google.com/file/d/1H6XR7S1d8v2jXxPOg5QI0sClVfMCkNkQ/view?usp=sharing" class="link-item">Know about BE VII Smart Computing (SMC) Theory Assignments.</a><a href="https://rms-sof.github.io/BE-8-Progress-Traker/" class="link-item">BE Sem 8 Track your academic progress.</a><a href="https://drive.google.com/file/d/1yJtnRwWkLMH_0MyFsrJchST0ukl9u7yy/view?usp=sharing" class="link-item">Know about BE VIII Distributed Systems (DS) Theory Assignments.</a><a href="https://drive.google.com/file/d/1aWFOpOA5nrQCBKx9XjZPuiwTo0G2HOkV/view?usp=sharing" class="link-item">Know about BE VIII Social Computing (SOC) Theory Assignments.</a><a href="https://script.google.com/macros/s/AKfycbwOYSuuqrh8t0JVHfmspY5WJt3iYu8E3L2MABiCzXAI712TZF_FKqsyG0MfbKmmgWH9/exec" class="link-item">Upload theory assignments</a><a href="https://docs.google.com/document/d/1y8f6uOijJ00B5kJ_OZXW1cHcewRptBtLQeQ8H16OOgI/edit?usp=sharing" class="link-item">SEIT 2024 Pat EVS Assignments</a><a href="https://docs.google.com/document/d/1xq37PsZA05bELQOoStjZy1mMJFztUwk8CAGJV8UaFsk/edit?usp=sharing" class="link-item">SEIT 2024 Pat UHVPE Universal Human Values & Professional Ethics</a><a href="https://script.google.com/macros/s/AKfycbzqmI_BI2zE4DzZ52dEnkBNjJ-bFi-aakDiu-Up7_NuXEX42vVdN4jJz3dMKUwLqbUK/exec" class="link-item">Track Theory Assignments Status</a><a href="https://script.google.com/macros/s/AKfycby2Fg8_whZ-8cRW78Mk95y_n_49NypqLRQeMSiW4chZ7bgFE0YQAk4lAaMXGlbEY1cu/exec" class="link-item">Apply for BE IT Submission Ticket</a></div></div>
+  <div class="card"><div class="icon">🎪</div><h2 class="card-title">Enhance Yourself</h2><div class="links-section"><a href="https://www.youtube.com/watch?v=Bi4A4xedCvI" class="link-item">Your role in shaping Excellence</a><a href="https://youtu.be/QXtpq0EcFa4" class="link-item">Student Advisory for Good academic life</a><a href="https://www.youtube.com/watch?v=lwSOI0VlkF8&list=PLGJ1tOIRaVQhzXUOew2YuhhPWXRU6EhMk&index=1" class="link-item">Importance of Regular attendance</a><a href="https://www.youtube.com/watch?v=IPuhV4pfFwI" class="link-item">Reorient yourself for AI Era</a><a href="https://www.youtube.com/watch?v=1s_GXXA91zg" class="link-item">How to measure quality of IT education?</a><a href="https://www.youtube.com/watch?v=0MkmHBXSY1c&list=PLGJ1tOIRaVQhzXUOew2YuhhPWXRU6EhMk&index=3" class="link-item">How to make study interesting?</a><a href="https://www.youtube.com/watch?v=8kumlKbqSEM&list=PLGJ1tOIRaVQhzXUOew2YuhhPWXRU6EhMk&index=12" class="link-item">How to Improve your Thinking process?</a><a href="https://www.youtube.com/watch?v=IMspKgje554&list=PLGJ1tOIRaVQhzXUOew2YuhhPWXRU6EhMk&index=6" class="link-item">Find out your Learning Style</a><a href="https://www.youtube.com/watch?v=GQGLl2eZSpI&list=PLGJ1tOIRaVQhzXUOew2YuhhPWXRU6EhMk&index=22" class="link-item">Teacher v/s AI - Why to attend lectures regularly?</a><a href="https://www.youtube.com/watch?v=wiBrgc8Iz4w" class="link-item">Why to perform practicals regularly in lab?</a><a href="https://www.youtube.com/watch?v=FqVBsjV-A2g&t=19s" class="link-item">Core IT Thinking Skills</a><a href="https://www.youtube.com/watch?v=PuBbaAyZ098" class="link-item">Strict policy v/s Nudging</a><a href="https://youtu.be/nsconc321-U" class="link-item">Transform yourself</a><a href="https://rms-sof.github.io/RoadMap/" class="link-item">Build your Road Map to Success</a><a href="https://drive.google.com/file/d/12j_rEMiU_hFKfcfYm5B6BpV3L_WSF448/view?usp=sharing" class="link-item">Explore Road Map for IT Skills</a><a href="https://youtu.be/f0gkqLrwA3s" class="link-item">Develop successful Personality</a><a href="https://rms-sof.github.io/Know-yourself/" class="link-item">Take a Quiz to analyze Yourself</a></div></div>
+  <div class="card"><div class="icon">🧘</div><h2 class="card-title">Paperless Exams</h2><div class="links-section"><a href="https://www.youtube.com/watch?v=e6xtOUPuwJ0" class="link-item">Exams, why?</a><a href="https://www.youtube.com/watch?v=_LDcMv-Tmtk" class="link-item">Exams, how?</a><a href="https://rms-sof.github.io/Paperless-Exam/" class="link-item">Take Paperless Exams</a><a href="https://docs.google.com/document/d/1VtLZ2rXCWnXfkHiFm_wjS1lwaTk90GxP4A2uFAcsK-U/edit?usp=sharing" class="link-item">For teachers - PR Exam Chits</a></div></div>
+  <div class="card"><div class="icon">⚡</div><h2 class="card-title">Actionable Plan</h2><div class="links-section"><a href="https://youtu.be/QXtpq0EcFa4" class="link-item">Student Advisory for smooth Engg journey</a><a href="https://youtu.be/VwFhjGpz_gs" class="link-item">Explore your hidden Potentials</a><a href="https://youtu.be/LB8445j6GzU" class="link-item">Know iconic concepts in IT field</a><a href="https://drive.google.com/file/d/12j_rEMiU_hFKfcfYm5B6BpV3L_WSF448/view?usp=sharing" class="link-item">Map of Subject Knowledge & Industry skills & AI Skills</a><a href="https://rms-sof.github.io/transform/" class="link-item">Explore Co-Academic framework for growth</a><a href="https://rms-sof.github.io/RoadMap/" class="link-item">Plan your effective Biodata</a><a href="https://rms-sof.github.io/IT-ActionPlan-1/" class="link-item">Simple Plan for actions</a><a href="https://rms-sof.github.io/IT-RoadMap-1/" class="link-item">Intermediate Plan for actions</a><a href="https://rms-sof.github.io/IT-action-plan-2/" class="link-item">Advance Plan for actions</a><a href="https://rms-sof.github.io/IT-Motivate/" class="link-item">Constant Motivation to be on track</a></div></div>
+  <div class="card"><div class="icon">🧘</div><h2 class="card-title">Stress Management</h2><div class="links-section"><a href="https://youtu.be/ZU3XqlTRu_o" class="link-item">Counselling for FINAL YEAR students</a><a href="https://youtube.com/shorts/sudW1W5D-K8" class="link-item">Festivals & Academics</a><a href="https://www.youtube.com/watch?v=NRft1DVXBcI&list=PLGJ1tOIRaVQhzXUOew2YuhhPWXRU6EhMk&index=17" class="link-item">Listen for boosting morale to be actionable.</a><a href="https://www.youtube.com/watch?v=pKEWPRawEQg&list=PLGJ1tOIRaVQhzXUOew2YuhhPWXRU6EhMk&index=26" class="link-item">Watch for recovering from small problems.</a><a href="https://www.youtube.com/watch?v=QtWB5XNjcig&list=PLGJ1tOIRaVQhzXUOew2YuhhPWXRU6EhMk&index=5" class="link-item">(मराठी भाषेत )Counselling for recovering from crisis.</a><a href="https://www.youtube.com/watch?v=iQGEd_oeF7s&list=PLGJ1tOIRaVQhzXUOew2YuhhPWXRU6EhMk&index=14" class="link-item">How to Improve Mental Health?</a><a href="https://www.youtube.com/watch?v=e6xtOUPuwJ0" class="link-item">What is the real purpose of exams?</a><a href="https://www.youtube.com/watch?v=_LDcMv-Tmtk" class="link-item">How to score more in exam?</a><a href="https://youtu.be/QXtpq0EcFa4" class="link-item">Student Advisory</a></div></div>
+  <div class="card"><div class="icon">📅</div><h2 class="card-title">Digital Wellness</h2><div class="links-section"><a href="https://youtube.com/shorts/Tt--7axTysw" class="link-item">How to reclaim yourself?</a><a href="https://www.youtube.com/watch?v=XRp7FDvkwPk&list=PLGJ1tOIRaVQhzXUOew2YuhhPWXRU6EhMk&index=18" class="link-item">How to be Digitally Fit?</a><a href="https://www.youtube.com/watch?v=zamxUKQhhwM&list=PLGJ1tOIRaVQhzXUOew2YuhhPWXRU6EhMk&index=25" class="link-item">How to measure excess limit in technology dependancy?</a><a href="https://www.youtube.com/watch?v=HRoIiWz2oE4&list=PLGJ1tOIRaVQhzXUOew2YuhhPWXRU6EhMk&index=15" class="link-item">How to Cultivate Good Habits?</a><a href="https://rms-sof.github.io/Game-design/" class="link-item">How are games made addictive?</a><a href="https://www.youtube.com/watch?v=OkZv6gy81KY" class="link-item">How are reels and shorts made additive?</a><a href="https://www.youtube.com/watch?v=ruJb1IXziV0&list=PLGJ1tOIRaVQhzXUOew2YuhhPWXRU6EhMk&index=23" class="link-item">Professional Help 1 - Universal Human Values in Coding</a><a href="https://www.youtube.com/watch?v=giHPgLyY2HE&list=PLGJ1tOIRaVQhzXUOew2YuhhPWXRU6EhMk&index=28" class="link-item">Professional Help 2 - Harmony in Coding</a><a href="https://www.youtube.com/watch?v=2vUob_RbZOM&list=PLGJ1tOIRaVQhzXUOew2YuhhPWXRU6EhMk&index=27" class="link-item">Professional Help 3 - Management Principles in Coding</a><a href="https://rms-sof.github.io/deep-clean/" class="link-item">Professional Help 4 - Deep Cleaning in Software Development</a><a href="https://www.youtube.com/watch?v=R1TtgJc9-1c" class="link-item">Lessons from history for software development</a><a href="https://rms-sof.github.io/Healthy-Happy/" class="link-item">Health & Happiness </a></div></div>
+  <div class="card"><div class="icon">🎪</div><h2 class="card-title">Academic Resources</h2><div class="links-section"><a href="https://youtu.be/QXtpq0EcFa4" class="link-item">IT Student Advisory</a><a href="https://www.youtube.com/watch?v=Bi4A4xedCvI" class="link-item">You & NAAC-NBA-NEP</a><a href="https://youtu.be/U6HJFVG6imc" class="link-item">Inclusive Education in your department</a><a href="https://youtu.be/Yl85mMTdo_E" class="link-item">Building Academic Culture in your department</a><a href="https://forms.gle/T8hYFG5dsAU7C8PY9" class="link-item">Submission Schedules & Calendars</a><a href="https://drive.google.com/file/d/12j_rEMiU_hFKfcfYm5B6BpV3L_WSF448/view?usp=sharing" class="link-item">Explore IT Skills Map</a><a href="https://docs.google.com/spreadsheets/d/1no-aVnVeB8ylrZtSs-VRtqLC7bEb-xnFeAyaxmho6Zs/edit?usp=sharing" class="link-item">Check Current Time table</a><a href="https://forms.gle/TF7RxbkdQH7b9T8g9" class="link-item">Get all Formats related to CEP, Seminar, Internship & BE Project</a><a href="https://docs.google.com/document/d/1MZvYIHwKV_pLMDldbRKFU-bKZvM0oqqWssyOhPNdvuo/edit?usp=sharing" class="link-item">Check Current Academic Calendar</a><a href="https://script.google.com/macros/s/AKfycbwLND-1SZ5Kt5yp-6Kcptuiy6sfDxwubyp0zqjIIDXOxfR1hADmsSDw0u1XRZdBmvMx5g/exec" class="link-item">Mark your Presence</a><a href="https://docs.google.com/spreadsheets/u/3/d/1OVzWzKBKbYcmwCc3rM2INpl3b9J3qZAko6iL_adhfRk/edit?usp=sharing" class="link-item">Check your Presence</a><a href="https://forms.gle/tQ6fxMp5C9Hng27N9" class="link-item">IT Course entire Syllabus</a><a href="https://docs.google.com/document/d/10I6DXo6a9Lrq9qS_VWfQ63fxOdFG8fu2UglVdGdDw48/edit?usp=sharing" class="link-item">Read NBNSTIC-IT Newsletters</a><a href="https://docs.google.com/presentation/d/1-0X4y5KJZ03tPyZ7zNegE3wlMPglbSDn/edit?usp=sharing&ouid=102506932615320403527&rtpof=true&sd=true" class="link-item">FE Induction - HOD-IT Presentation</a><a href="https://script.google.com/macros/s/AKfycbzvJ8XpuL-p8yxnOJcGpJMHX_sz36YeZoq-ggkzkb3h4gj2AC23QfehlEPdeiBE3kBy/exec" class="link-item">BE Sem 8 Track your academic progress.</a><a href="https://script.google.com/macros/s/AKfycbzg61qEsbHp_GoMcC0TfS2PFc-wULBpK9DdLyrLsPcTkGDQqWhDBXt_1Z0YceYSgAR9MA/exec" class="link-item">Apply for leave</a></div></div>
+  <div class="card"><div class="icon">🧘</div><h2 class="card-title">Algorithms by Visualization</h2><div class="links-section"><a href="https://rms-sof.github.io/Concepts-Animations/" class="link-item">Learning Concepts & Algorithms using animations</a></div></div>
+  <div class="card"><div class="icon">📅</div><h2 class="card-title">Historical Timelines</h2><div class="links-section"><a href="https://www.youtube.com/watch?v=PMU9ho6NulI" class="link-item">Information & Storage Retrieval - Historical Timeline</a><a href="https://rms-sof.github.io/DL-TimeLine/" class="link-item">Deep Learning - Historical Timeline</a></div></div>
+  <div class="card"><div class="icon">🎪</div><h2 class="card-title">Concept Videos</h2><div class="links-section"><a href="https://www.youtube.com/watch?v=lwSOI0VlkF8&list=PLGJ1tOIRaVQhzXUOew2YuhhPWXRU6EhMk" class="link-item">Tips for success</a><a href="https://www.youtube.com/watch?v=EAikorsZB3E&list=PLGJ1tOIRaVQjzUju1OLDQ_lMZpOtJ3E47" class="link-item">Distributed Systems (DS) (BE- VIII)</a><a href="https://www.youtube.com/watch?v=a0gkJOlrFIk&list=PLGJ1tOIRaVQiFe0LRcLbyFy_pDtPJ4okQ" class="link-item">SNE (BE- VIII)</a><a href="https://www.youtube.com/watch?v=EYKCVjUA0hE&list=PLGJ1tOIRaVQgc3-rdtbrzT81OgCZmYbVy" class="link-item">Social Computing (SOC)(BE- VIII)</a><a href="https://www.youtube.com/watch?v=j9ySth2Km0w&list=PLGJ1tOIRaVQh69EyxSN31KvX4SRV9FH_e" class="link-item">BAI (BE- VIII)</a><a href="https://www.youtube.com/watch?v=WttASb3EuHc&list=PLGJ1tOIRaVQhp3vKgVQiNesgjgsvEvhj-" class="link-item">Information Storage & Retrieval (ISR) (BE- VII)</a><a href="https://www.youtube.com/watch?v=2xdQ9J34-q8&list=PLGJ1tOIRaVQiYlA6wNLDT0X97KZ8A4Sgi" class="link-item">Deep Learning (DL) (BE- VII)</a><a href="https://www.youtube.com/watch?v=DYyD9hR1yG4&list=PLGJ1tOIRaVQj8cPDQ9kfrhLbPmjWZPO58" class="link-item">Smart Computing (SMC) (BE- VII)</a><a href="https://www.youtube.com/watch?v=JOt4UBT9cCE&list=PLGJ1tOIRaVQiBKY00O9SgjG-LAc49PkS_" class="link-item">SPM (BE- VII)</a><a href="https://www.youtube.com/watch?v=wnZp6hc81CQ&list=PLGJ1tOIRaVQghnwsuWA6Dir6aM3MLTJmd" class="link-item">DevOps (BE- VII)</a><a href="https://www.youtube.com/watch?v=oEHEwNid16s&list=PLGJ1tOIRaVQjNuQQkPGh7As4jvzD9crS3" class="link-item">TOC (TE- V)</a><a href="https://www.youtube.com/watch?v=wtcAMojndBE&list=PLGJ1tOIRaVQhshdDhurLEBY3NI6b1y2ox" class="link-item">Machine Learning (ML)(TE- V)</a><a href="https://www.youtube.com/watch?v=Xk-XZO4C6VI&list=PLGJ1tOIRaVQhQLqW0KtCh_lg0-sJ49nZW" class="link-item">DSBDA (TE- VI)</a><a href="https://www.youtube.com/watch?v=TfxOFJkZUO4&list=PLGJ1tOIRaVQjf8aGYpalGKPdhLS6_ZTwf" class="link-item">WAD TE 2019 Web Application Development</a><a href="https://www.youtube.com/watch?v=8MJE06zY9mE&list=PLGJ1tOIRaVQg7KaQGMdEDmTn7WFRR4Ere" class="link-item">DBMS (SE IV)</a><a href="https://www.youtube.com/watch?v=Acy7IgrZQxQ&list=PLGJ1tOIRaVQh-_NPE3GV1Sob3gRVhApVu" class="link-item">Software Engg (SE IV)</a></div></div>
+  <div class="card"><div class="icon">🧠</div><h2 class="card-title">Subject Overview by AI</h2><div class="links-section"><a href="https://rms-sof.github.io/ML-ai/" class="link-item">Machine Learning ML</a><a href="https://rms-sof.github.io/SMC-ai/" class="link-item">Smart Computing SMC</a><a href="https://rms-sof.github.io/SOC-ai/" class="link-item">Social Computing SOC</a><a href="https://rms-sof.github.io/ISR-ai/" class="link-item">Information Storage & Retrieval ISR</a><a href="https://rms-sof.github.io/Intelligence-evolution/" class="link-item">AI Evolution Gen AI to Agentic AI</a><a href="https://rms-sof.github.io/GenAI-AgenticAI/" class="link-item">IT Engg Education by Agentic AI</a><a href="https://rms-sof.github.io/Agentic-AI-Education/" class="link-item">Agentic AI in IT Engg education</a><a href="https://rms-sof.github.io/BIA-ai/" class="link-item">Business Intelligence & Analytics BIA</a><a href="https://rms-sof.github.io/DL-ai/" class="link-item">Deep Learning DL</a><a href="https://rms-sof.github.io/DSBDA-AI/" class="link-item">Data Science & Big Data Analytics DSBDA</a><a href="https://rms-sof.github.io/TOC-ai/" class="link-item">TOC Theoretical Computer Science</a><a href="https://rms-sof.github.io/DS-ai/" class="link-item">DS Distributed Systems</a><a href="https://rms-sof.github.io/CNS-ai/" class="link-item">CNS Computer Networks</a><a href="https://rms-sof.github.io/WAD-ai/" class="link-item">WAD Web Application Development</a><a href="https://rms-sof.github.io/DevOps/" class="link-item">DevOps</a><a href="https://rms-sof.github.io/SDM-ai/" class="link-item">SDM Software Design & Methodologies</a><a href="https://rms-sof.github.io/SE-ai/" class="link-item">SE Software Engineering</a><a href="https://rms-sof.github.io/PM-ai/" class="link-item">Project Management of Software projects</a><a href="https://rms-sof.github.io/spm-ai/" class="link-item">SPM Software Project Management</a><a href="https://rms-sof.github.io/Maths-CS/" class="link-item">Maths in Computing</a><a href="https://rms-sof.github.io/Digi-Lib/" class="link-item">Digital Library</a></div></div>
+  <div class="card"><div class="icon">📅</div><h2 class="card-title">Lab Manuals</h2><div class="links-section"><a href="https://docs.google.com/document/d/19w9iiM_gDk_a58S89Lt06MBvNhxKWrT0/edit?usp=sharing&ouid=112955186310509340094&rtpof=true&sd=true" class="link-item">Information Storage & Retrieval</a><a href="https://drive.google.com/file/d/1l52jDoDd0G06xuhtjR43ne8nnTldsdEs/view?usp=sharing" class="link-item">Information Storage & Retrieval (BE 2019 pat)</a><a href="https://drive.google.com/file/d/1xktxwn3GxOOnJLtog_8IwFLdcSJ9-6JX/view?usp=drive_link" class="link-item">Deep Learning (DL) Journal ( BE 2019 pat)</a><a href="https://drive.google.com/file/d/1WN3UXCq6EsHwmnz2GzU8qiiN78lUUnOb/view?usp=drive_link" class="link-item">Distributed Systems (DS) Journal (BE 2019 pat)</a><a href="https://docs.google.com/document/d/1K5yCrFGbQfBF5AhR-L0aO1ln2kp6QFXoXJVzivW3ono/edit?usp=sharing" class="link-item">Startup & Entreprenuership (SNE) Journal (BE 2019 pat)</a><a href="https://drive.google.com/file/d/1b-UzO8OYUnmzF2nCeiZtBJLevD1sWq4f/view?usp=drive_link" class="link-item">Business Intelligence & Analytics (BIA) Journal (BE 2019 pat) </a><a href="https://drive.google.com/file/d/18aPnG_cpr76X-hn2z1TxkUsnzp0ng6k5/view?usp=drive_link" class="link-item">Cloud Computing (CC) Journal (TE 2019 pat) </a><a href="https://drive.google.com/file/d/19M9QJw23bL3UnvL9JCFbmMhCYUIdw97M/view?usp=drive_link" class="link-item">LP - I ADBMS Journal (TE 2019 pat) </a><a href="https://drive.google.com/file/d/1Bf7q0AFZwTFmPGBPHOuYkn59HWKho1EJ/view?usp=drive_link" class="link-item">LP - I Machine Learning Journal (ML)(TE 2019 pat) </a><a href="https://drive.google.com/file/d/10g9vcCvWJpqaWrdvd7veDBU8fR3hmzPW/view?usp=sharing" class="link-item">DSBDA Journal (TE 2019 pat) </a><a href="https://drive.google.com/file/d/1G43uT26KmNi9rlntTAfM2wY4kJdZK3Xf/view?usp=sharing" class="link-item">WAD Journal (TE 2019 pat) </a><a href="https://drive.google.com/file/d/1ubhygGDexRKGBNI55idmbkoJlI8lg49b/view?usp=sharing" class="link-item">Computer Graphics ( CG ) (SE) </a><a href="https://drive.google.com/file/d/1NNgdlPrTZ3D_V6bNVfcUNhIQ_w4t9xaL/view?usp=sharing" class="link-item">Modern Indian Languages SE 2024 pat MIL</a></div></div>
+  <div class="card"><div class="icon">📅</div><h2 class="card-title">Subjective Exams</h2><div class="links-section"><a href="https://www.youtube.com/watch?v=e6xtOUPuwJ0" class="link-item">Exams, why?</a><a href="https://www.youtube.com/watch?v=_LDcMv-Tmtk" class="link-item">Exams, how?</a><a href="https://youtu.be/R7XYoPYGFfM?si=7bxu37pIgQfO9m0l" class="link-item">How will Mock Exams retain knowledge & Skills?</a><a href="https://script.google.com/macros/s/AKfycbzV5ZR_0ilC4vacB6NUpzMhUkUkSYNKBSRsZwpurblUCacNO1EBVS-RHZpSy4G7NqOTKA/exec" class="link-item">Take mock theory exam for BE IT</a><a href="https://rms-sof.github.io/ML-subjective/" class="link-item">Machine Learning (ML)- Take subjective Exam of 30 marks 1 hr duration</a><a href="https://script.google.com/macros/s/AKfycbziXx_7wkaThJ0sLgkhZIPE_DV9OSaojFfdeRxWY92tPyGIcbHFrBFYSrvyAbcpXtTo/exec" class="link-item">Take BIA - Unit 1-2 Theory Exam</a><a href="https://rms-sof.github.io/DSBDA-subjective/" class="link-item">DSBDA - Take subjective Exam of 30 marks 1 hr duration</a><a href="https://rms-sof.github.io/DL-subjective/" class="link-item">Deep Learning (DL) - Take subjective Exam of 30 marks 1 hr duration.</a><a href="https://rms-sof.github.io/ISR-subjective/" class="link-item">Information Storage & Retrieval (ISR) - Take subjective Exam of 30 marks 1 hr duration.</a><a href="https://script.google.com/macros/s/AKfycbw8_C10Q66loxuYYA3e1SbpEM1-DougBBQ6Dlv9IQpzXaerCn_XW-o32mL9UBaonNB8IA/exec" class="link-item">SEIT Exam DSA CCA Unit 6 Test</a><a href="https://script.google.com/macros/s/AKfycbwTIq1GKhap5XBU2Jm_ongGYRCYOpNlkhjcMmBdJ7m59zCGBJZgh5jtdZR5owek3ub3/exec" class="link-item">SEIT Exam OOP CCA Unit 6 Test</a></div></div>
+  <div class="card"><div class="icon">📅</div><h2 class="card-title">Mock Oral Exams</h2><div class="links-section"><a href="https://www.youtube.com/watch?v=e6xtOUPuwJ0" class="link-item">Exams, why?</a><a href="https://www.youtube.com/watch?v=_LDcMv-Tmtk" class="link-item">Exams, how?</a><a href="https://youtu.be/R7XYoPYGFfM?si=7bxu37pIgQfO9m0l" class="link-item">How will Mock Exams retain knowledge & Skills?</a><a href="https://script.google.com/macros/s/AKfycbyx9dWZmrKStNcA9OKjxLUo5y1y-bz4NOlSbhwtPbWtxSgYcSZKHK9NwCAlKRpj6qg7/exec" class="link-item">BE Oral- BIA Mock Viva Exam</a><a href="https://script.google.com/macros/s/AKfycbwIQYs0RQVhUN6-AhsnJ-L8FFW_g9Quoo8KgpIIHISL7yQQxlCALcInXh-I0ZHb-eA0/exec" class="link-item">BE Oral- Project Mock Viva Exam</a><a href="https://script.google.com/macros/s/AKfycbzHoN4DNRx1C-ikD4eF0wCqf1lhynGctrDNrjyOY4b_4a4dyAddNPUJoLAk_NjzQWfKCA/exec" class="link-item">BE Oral- ISR - Mock Viva Exam</a><a href="https://script.google.com/macros/s/AKfycbwVlm7YeDC5rze0E884aXXtFtCszi7CXpD7SRZ2-F_TQ6FyJjIXGKr7_HCayYcdW6P7/exec" class="link-item">SE Oral - OOP Mock Viva Exam</a><a href="https://script.google.com/macros/s/AKfycbzF3Sn1AisFktidlkbfCaGCdJTBJtMNxElTdj1yU8YCpVDClTLqQu4ljoIj3A-c9cPd/exec" class="link-item">SE Oral- CEP / MiniProject Mock Viva Exam</a><a href="https://script.google.com/macros/s/AKfycbxFWq6Yodv6mebt1V-aYF4xTCAuDuNJM94VC0_xzVgFuc0be-bf7YWIjbL_hWczWPXp/exec" class="link-item">TE Oral- Seminar Mock Viva Exam</a><a href="https://script.google.com/macros/s/AKfycbxTpOMXJay5zbGiLVXAvwee4tR8j0hWSKt7VdV1H4b24XyC6thZv9srPlrNWz3DuD3bqg/exec" class="link-item">TE Oral- Internship Mock Viva Exam</a><a href="https://script.google.com/macros/s/AKfycbzZ-5fLa_nQGFDBoH0KQ_nDzl_EWceG6nmrSE9vuiTCKbFdvqM4g5DA_prGVpDpHHpD/exec" class="link-item">BE Oral- SNE Mock Viva Exam</a><a href="https://rms-sof.github.io/CG-Oral-Prep/" class="link-item">Computer Graphics CG SE 2024 Pat Oral/Viva Exam</a><a href="https://rms-sof.github.io/BIA-oral-prep/" class="link-item">Business Intelligence & Analytics BIA BE 2019 pat Oral / Viva Exam</a></div></div>
+  <div class="card"><div class="icon">🧘</div><h2 class="card-title">Personalized Learning</h2><div class="links-section"><a href="https://youtu.be/bmLqbZflhgA" class="link-item">What is Personalized Learning?</a><a href="https://drive.google.com/file/d/1vngCskIUUL_-EqeT-8cp1ZrzW8Lm9JU9/view?usp=drive_link" class="link-item">Deep Leaning DL</a><a href="https://drive.google.com/file/d/129GzLJorVX1M3CNwJeQ6K2hrJgWkdUT2/view?usp=drive_link" class="link-item">Information Storage & Retrieval ISR</a><a href="https://drive.google.com/file/d/14qrIvXWX80XckzdLx1771xm4mZV8gdJo/view?usp=drive_link" class="link-item">Social Computing SOC</a><a href="https://drive.google.com/file/d/1_IYyocJfE5AUHp9BwtzCDSyySPpleboI/view?usp=drive_link" class="link-item">Smart Computing SMC</a><a href="https://drive.google.com/file/d/1h_3jA0DLvlyquWVI6gk9stZt3hnrGKb7/view?usp=drive_link" class="link-item">Data Science & Big Data Analytics DSBDA</a><a href="https://drive.google.com/file/d/1_XaUnsPyFFsKBgDkasXeytyO3opuA-G7/view?usp=drive_link" class="link-item">Machine Learning ML</a><a href="https://drive.google.com/file/d/1CmVpl9SHfnvJX4uVSu5Od1b_80xAgN16/view?usp=drive_link" class="link-item">Software Project Management SPM</a><a href="https://drive.google.com/file/d/1a-Sh2sJ65lrCsZgOLVk1PaGdag1SLtfd/view?usp=drive_link" class="link-item">Distributed Systems DS</a><a href="https://drive.google.com/file/d/1RPReHBk0NjjHw8DtHbLRBP2953f6XZPi/view?usp=drive_link" class="link-item">Try Gamified Lesson Plans for ISR & Deep Learning</a><a href="https://drive.google.com/file/d/12lrx2_4qo90fqwmR3ZbTIV4CebKCQDM-/view" class="link-item">Flipped Classroom sessions for ISR & DL</a><a href="https://www.youtube.com/watch?v=tMXKZpYgPYw" class="link-item">Life lessons from Computing</a><a href="https://rms-sof.github.io/Green-IT/" class="link-item">Green IT - Sustainable IT</a><a href="https://www.youtube.com/shorts/zi_LSXm3q4g" class="link-item">Extracting wisdom from the data</a><a href="https://youtu.be/GvjhV1Q6SXM?si=XRJvBMEHyQxGR4YY" class="link-item">Evolution of IT Engg Education</a><a href="https://www.youtube.com/watch?v=FqVBsjV-A2g&t=19s" class="link-item">Core IT Thinking Skills</a><a href="https://www.youtube.com/watch?v=oARZbwWHi8I" class="link-item">Integrating { CEP + Seminar + Internship + BE Project }</a><a href="https://rms-sof.github.io/Digi-Lib/" class="link-item">Digital Library</a></div></div>
+  <div class="card"><div class="icon">📅</div><h2 class="card-title">Special CS Topics</h2><div class="links-section"><a href="https://rms-sof.github.io/Distributions/" class="link-item">Maths series - Distributions</a><a href="https://rms-sof.github.io/stats-tests/" class="link-item">Maths Series - Statistical Tests</a><a href="https://rms-sof.github.io/curves-fractals/" class="link-item">CG Series - Curves & Fractals</a><a href="https://rms-sof.github.io/drawing-clipping/" class="link-item">CG Series - Lines Polygons Circle Clipping Filling</a><a href="https://rms-sof.github.io/Decidability/" class="link-item">TOC series - Decidability</a><a href="https://rms-sof.github.io/Complexity/" class="link-item">TOC series - Complexity</a><a href="https://rms-sof.github.io/turing/" class="link-item">TOC series - Turing Machines</a><a href="https://rms-sof.github.io/markov/" class="link-item">DSBDA Series - Markov Chain</a><a href="https://rms-sof.github.io/Flajolet-Martin/" class="link-item">DSBDA Series - Flajolet-Martin Algorithm</a><a href="https://rms-sof.github.io/SRS-Tool/" class="link-item">SW Engg Series - How to extract functional & non-functional requirements from user interview? SRS</a><a href="https://rms-sof.github.io/clean-code/" class="link-item">SW Engg Series - Clean Coding Principles</a><a href="https://rms-sof.github.io/SW-efforts-estimator/" class="link-item">SW Engg Series -Software Efforts Estimator (Cocomo, FP, LOC)</a><a href="https://rms-sof.github.io/vibe-coding/" class="link-item">SW Engg Series - Vibe Coding</a><a href="https://rms-sof.github.io/Sorting/" class="link-item">DSA Series - Sorting Algorithms DSA Bubble Merge Quick Selection</a><a href="https://rms-sof.github.io/shortest-path/" class="link-item">DSA Series - Shortest Path Dijkstra Prim Kruskal Floyd-Warshall</a><a href="https://rms-sof.github.io/mst/" class="link-item">DSA Series - Minimum Spanning Tree (MST) Algorithms</a><a href="https://rms-sof.github.io/Tree-walker/" class="link-item">DSA Series - Tree Traversal DSA Prefix Postfix Infix</a><a href="https://rms-sof.github.io/Normalization/" class="link-item">DBMS Series - Normalization 0NF 1 NF 2NF 3NF BCNF</a><a href="https://rms-sof.github.io/Schedule-serializer/" class="link-item">DBMS Series - concurrency control Schedule Serialization</a><a href="https://rms-sof.github.io/cpu-scheduler/" class="link-item">OS Series - CPU Scheduling Algorithms</a><a href="https://rms-sof.github.io/Digi-Lib/" class="link-item">Digital Library</a><a href="https://rms-sof.github.io/page-replacement/" class="link-item">OS Series - Page Replacement Algorithms</a><a href="https://rms-sof.github.io/page-replacement/" class="link-item">OS Series - Producer Cosumer, Banker, Dining Philosopher Algorithms</a><a href="https://script.google.com/macros/s/AKfycbxeb7Z80-arVNlIpgnUBqENg-5oYDFkl37gUhBxFLq0-OBnwCQKk7ygZEsJtScdDdlW/exec" class="link-item">Task Classifier</a><a href="https://rms-sof.github.io/Deliberation/" class="link-item">Deliberations vs Impulstive Creativity</a></div></div>
+  <div class="card"><div class="icon">🧠</div><h2 class="card-title">Online Quizzes</h2><div class="links-section"><a href="https://rms-sof.github.io/Programming-Quiz/" class="link-item">Sharpen your programming abilities Quiz</a><a href="https://rms-sof.github.io/AI-login/" class="link-item">Check your knowledge about AI Quiz</a><a href="https://rms-sof.github.io/Agentic-AI-Quiz/" class="link-item">Check your knowledge about Agentic AI Quiz</a><a href="https://rms-sof.github.io/AI-Types-Quiz/" class="link-item">Quiz on AGI ANI ASI</a><a href="https://rms-sof.github.io/Research-methodology/" class="link-item">Quiz on Research Methodology (RM)</a><a href="https://rms-sof.github.io/cs-quiz/" class="link-item">Test your fundamental Computing knowledge Quiz</a><a href="https://rms-sof.github.io/DBMS-Quiz/" class="link-item">Database Management System (DBMS) Quiz</a><a href="https://rms-sof.github.io/CG-Quiz/" class="link-item">Computer Graphics (CG) Quiz</a><a href="https://rms-sof.github.io/CG-Unit12/" class="link-item">Computer Graphics (CG) - Unit 1 & 2</a><a href="https://rms-sof.github.io/DSA-Quiz/" class="link-item">Data Structures & Algorithms (DSA) Quiz</a><a href="https://rms-sof.github.io/TOC-Quiz/" class="link-item">Theory of Computation (TOC) Quiz</a><a href="https://rms-sof.github.io/OS-Quiz/" class="link-item">Operating System (OS) Quiz</a><a href="https://rms-sof.github.io/Network-quiz/" class="link-item">Computer Networks (CNS) Quiz</a><a href="https://rms-sof.github.io/ML-Quiz/" class="link-item">Machine Learning (ML) Quiz</a><a href="https://rms-sof.github.io/DLQuiz/" class="link-item">Deep Learning (DL) Quiz</a><a href="https://rms-sof.github.io/SmCQuiz/" class="link-item">Smart Computing (SMC) Quiz</a><a href="https://rms-sof.github.io/PythonQuiz/" class="link-item">Python Programming Quiz</a><a href="https://rms-sof.github.io/DSQuiz/" class="link-item">Distributed Systems (DS) Quiz</a><a href="https://rms-sof.github.io/ISRQuiz/" class="link-item">Information Storage & Retrieval (ISR) Quiz</a><a href="https://rms-sof.github.io/SoCQuiz/" class="link-item">Social Computing (SOC) Quiz</a><a href="https://rms-sof.github.io/AI-Quiz/" class="link-item">AI Quiz for all</a><a href="https://rms-sof.github.io/Language-Profeciency-Tester/" class="link-item">Programming Languages Proficiency Quiz</a><a href="https://rms-sof.github.io/AI-GK/" class="link-item">General Knowledge GK Quiz on AI</a></div></div>
+  <div class="card"><div class="icon">📅</div><h2 class="card-title">Location Bound Exams</h2><div class="links-section"><a href="https://youtu.be/R7XYoPYGFfM?si=7bxu37pIgQfO9m0l" class="link-item">How will Mock Exams retain knowledge & Skills?</a><a href="https://script.google.com/macros/s/AKfycbwSrhUuNDQEYoatkvFnnMGz8WYZignLbhRXqS_0bb_MUPqPjS-OlXgEgmaIFC5wTuRW/exec" class="link-item">Rapidfire MCQs</a><a href="https://script.google.com/macros/s/AKfycbwrOloKfxFkG88Lp4x_ihjGhHePVvh8ygsvZDtvqiDHOzlLOaC2Z7jAlHIdUxmJGKcrlQ/exec" class="link-item">Start IT MCQs</a><a href="https://script.google.com/macros/s/AKfycbxPYu-DWjpZjzsFOFhlLWdOU1rb4UfaHHpRhMpKTJY4ihwctUjmb9NLAizW_LdwbokOuw/exec" class="link-item">Try out Proctored MCQs Exam</a><a href="https://script.google.com/macros/s/AKfycbyXP-eVDBtThRK-LPCeYfTAZzgWK9aFEPrEF6PJu1InYI8mvkSOt8aq3wIUz9XcsLBo/exec" class="link-item">BIA MCQs Exam</a></div></div>
+  <div class="card"><div class="icon">⚡</div><h2 class="card-title">Employability</h2><div class="links-section"><a href="https://youtu.be/JzsmpQfVRjY" class="link-item">Make IT Career Future-proof</a><a href="https://youtu.be/gl3JOzEIlyk" class="link-item">Changing Skill-sets</a><a href="https://www.youtube.com/watch?v=9PIIA97XQjY" class="link-item">How to Crack Technical Interview</a><a href="https://www.youtube.com/watch?v=riHjSprhdz8&list=PLGJ1tOIRaVQhzXUOew2YuhhPWXRU6EhMk&index=29" class="link-item">IT Syllabus Technical Brush-up before placement</a><a href="https://youtu.be/gl3JOzEIlyk" class="link-item">Know about Changing skill-set required for IT careers</a><a href="https://www.youtube.com/watch?v=zGmS-wy3ZpI&list=PLGJ1tOIRaVQhzXUOew2YuhhPWXRU6EhMk&index=9" class="link-item">How to build Capacity for a job?</a><a href="https://youtu.be/5sBcpNGYn8M" class="link-item">What do companies want?</a><a href="https://www.youtube.com/watch?v=ZUaYFVYit90&list=PLGJ1tOIRaVQhzXUOew2YuhhPWXRU6EhMk&index=24" class="link-item">Understanding about Employability</a><a href="https://www.youtube.com/watch?v=U6tJLRJUwU8&list=PLGJ1tOIRaVQhzXUOew2YuhhPWXRU6EhMk&index=7" class="link-item">How to become Employable?</a><a href="https://www.youtube.com/watch?v=zc4HH5Grbc0&list=PLGJ1tOIRaVQhzXUOew2YuhhPWXRU6EhMk&index=21" class="link-item">Alumni Advice for success</a><a href="https://www.youtube.com/watch?v=FqVBsjV-A2g&t=19s" class="link-item">Core IT Thinking Skills</a><a href="https://rms-sof.github.io/Green-IT/" class="link-item">Green IT - Sustainable IT</a></div></div>
+  <div class="card"><div class="icon">🔬</div><h2 class="card-title">Research & Innovation</h2><div class="links-section"><a href="https://youtu.be/ssitnpGdfs8" class="link-item">How to write a research paper?</a><a href="https://www.youtube.com/watch?v=afrEslTjm0Y" class="link-item">What is Research Methodology?</a><a href="https://www.youtube.com/watch?v=D_sQBHPXL5w&list=PLGJ1tOIRaVQhzXUOew2YuhhPWXRU6EhMk&index=13" class="link-item">Research outputs - Publications, IPR and Patents</a><a href="https://www.youtube.com/watch?v=4eBQ1Xhaxrg&list=PLGJ1tOIRaVQhzXUOew2YuhhPWXRU6EhMk&index=11" class="link-item">Guidelines for Using AI in your research</a><a href="https://rms-sof.github.io/Digi-Lib/" class="link-item">Digital Library</a><a href="https://www.youtube.com/watch?v=oARZbwWHi8I&list=PLGJ1tOIRaVQhzXUOew2YuhhPWXRU6EhMk&index=2" class="link-item">How to do Research & Study together?</a><a href="https://rms-sof.github.io/Green-IT/" class="link-item">Green IT - Sustainable IT</a><a href="https://docs.google.com/document/d/1E3vHiDq1CC43K-wp2PfR3f-4zZgQn1dFHwM1KtURfks/edit?usp=sharing" class="link-item">Avishkar (आविष्कार) Research Competition Guidance</a><a href="https://scholar.google.co.in/citations?user=ghoW_6AAAAAJ&hl=en" class="link-item">HOD's Research Profile</a></div></div>
+  <div class="card"><div class="icon">📅</div><h2 class="card-title">Useful Utilities</h2><div class="links-section"><a href="https://rms-sof.github.io/Edu-Utilities/" class="link-item">Check Productivity Solutions</a><a href="https://rms-sof.github.io/Age-Gender-Detector/" class="link-item">Check your age</a><a href="https://rms-sof.github.io/Age-Gate/" class="link-item">Age Gate</a><a href="https://rms-sof.github.io/EcoSystem-Assistant/" class="link-item">EcoSystem Guide</a><a href="https://rms-sof.github.io/Marathi-assistant/" class="link-item">EcoSystem मदतनीस</a></div></div>
+  <div class="card"><div class="icon">🔒</div><h2 class="card-title">IT Department Automated Workflows</h2><div class="links-section"><a href="https://script.google.com/macros/u/1/s/AKfycbxGjLmRWBSVMcPyjkGm347aQ7Sk_kqBjhGABKcMSkBQcMV4DfNh5MfuvCKRVQoLTZM/exec" class="link-item">MoM Distribution System</a><a href="https://script.google.com/macros/s/AKfycbzg61qEsbHp_GoMcC0TfS2PFc-wULBpK9DdLyrLsPcTkGDQqWhDBXt_1Z0YceYSgAR9MA/exec" class="link-item">Leave Application System</a><a href="https://docs.google.com/document/d/10I6DXo6a9Lrq9qS_VWfQ63fxOdFG8fu2UglVdGdDw48/edit?usp=sharing" class="link-item">Read NBNSTIC-IT Newsletters</a><a href="https://script.google.com/macros/s/AKfycbwLND-1SZ5Kt5yp-6Kcptuiy6sfDxwubyp0zqjIIDXOxfR1hADmsSDw0u1XRZdBmvMx5g/exec" class="link-item">Mark your Presence</a><a href="https://docs.google.com/spreadsheets/u/3/d/1OVzWzKBKbYcmwCc3rM2INpl3b9J3qZAko6iL_adhfRk/edit?usp=sharing" class="link-item">Check your Presence</a></div></div>
+  <div class="card"><div class="icon">📅</div><h2 class="card-title">Games</h2><div class="links-section"><a href="https://rms-sof.github.io/Game-design/" class="link-item">Game Design with Pychology & Computer Science</a><a href="https://rms-sof.github.io/PuzzleParadise/" class="link-item">Puzzles Games</a><a href="https://rms-sof.github.io/GameArcade/" class="link-item">Games for Dopamine Detox</a><a href="https://rms-sof.github.io/wordbuilder/" class="link-item">Word Builder Game</a><a href="https://rms-sof.github.io/scramble-game/" class="link-item">Unscramble Word Game</a><a href="https://rms-sof.github.io/PairTicTacToe/" class="link-item">Two player Game - Tic-Tac-Toe</a><a href="https://rms-sof.github.io/DotBox/" class="link-item">Two Player - Dot & Box Game</a></div></div>
+  <div class="card"><div class="icon">📅</div><h2 class="card-title">Teaching aids</h2><div class="links-section"><a href="https://www.youtube.com/watch?v=J1SV4NwMf0Q" class="link-item">Bloom's Taxonomy for papaer setting</a><a href="https://www.youtube.com/watch?v=Fv1N5MJC5ic" class="link-item">Using AI in academic contents preparation</a></div></div>
+  <div class="card"><div class="icon">⚡</div><h2 class="card-title">Philosophy</h2><div class="links-section"><a href="https://rms-sof.github.io/Geeta-geetai/" class="link-item">Geeta गीता-गीताई</a><a href="https://docs.google.com/document/d/1DHyQwn51LylEYqUL8uh24AKd0X7idMODNsGNDOiRKFw/edit?usp=sharing" class="link-item">Haripath हरिपाठ</a><a href="https://rms-sof.github.io/Life-Q/" class="link-item">Get Inspired!</a><a href="https://drive.google.com/file/d/1mEcYPX9ygsV5zyOH-i4xCbd6dGSMbZFS/view?usp=drive_link" class="link-item">Sanskrit संस्कृत श्लोक</a><a href="https://rms-sof.github.io/Profession-Q/" class="link-item">Professional Quotable Quotes</a><a href="https://rms-sof.github.io/Subhashite/" class="link-item">Subhashit Mala सुभाषित माला</a><a href="https://docs.google.com/document/d/1exG7ZGCgqFKhrN0szDHz9afUfGQL5XnSMcUKcadk2sU/edit?usp=sharing" class="link-item">Aarati Sangrah आरती संग्रह</a></div></div>
+</div>
+
+<header>
+  <div class="banner-inner">
+    <div class="banner-icon">🌳</div>
+    <div class="banner-text">
+      <h1>EcoSystem | Prof. Rahul M. Samant</h1>
+      <p> Explore · Discover · Grow </p>
+    </div>
+    <div class="banner-badge">🍃 Live &amp; Growing</div>
+  </div>
+</header>
+
+<div class="search-bar-wrap">
+  <div style="width:100%;max-width:540px;">
+    <div class="search-container">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="searchInput" placeholder="Search ecosystems, species, resources…" autocomplete="off"/>
+      <button id="voiceBtn" title="Voice search" onclick="toggleVoice()">
+        <span>🎙</span><div class="mic-dot"></div><span id="voiceLabel">Voice</span>
+      </button>
+    </div>
+    <div id="voiceStatus"></div>
+  </div>
+</div>
+
+<main id="mainContainer">
+
+  <div class="panel" id="panelLeft">
+    <div class="photo-placeholder">
+      <img src="website-picture.png" alt="Prof. Rahul M. Samant" />
+      <div class="photo-label">📷 Prof. Rahul M. Samant</div>
+    </div>
+    <div class="intro-card">
+      <h2>Welcome to EcoSystem </h2>
+      <p>A comprehensive knowledge hub dedicated to mindful learning, academic planning, and student well-being. Browse the navigation tree to explore study resources, schedules, lab manuals, and much more.</p>
+    </div>
+  </div>
+
+  <div class="divider" id="divider1" title="Drag to resize"></div>
+
+  <div class="panel" id="panelMid">
+    <div class="tree-heading">🌿 Navigation Tree</div>
+    <div class="tree" id="ecoTree"></div>
+  </div>
+
+  <div class="divider" id="divider2" title="Drag to resize"></div>
+
+  <div class="panel" id="panelRight">
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-num">250+</div><div class="stat-label">Mindful Consultations</div></div>
+      <div class="stat-card"><div class="stat-num">150+</div><div class="stat-label">Academic Tools</div></div>
+      <div class="stat-card"><div class="stat-num">100+</div><div class="stat-label">Mock Exams & Quizzes</div></div>
+    </div>
+    <div class="info-grid">
+      <div class="info-card">
+        <h4> 📚  Learning & Academics</h4>
+        <p>Access lab manuals, personalized learning paths, concept videos, subject overviews by AI, and historical timelines to deepen understanding across all IT subjects..</p>
+      </div>
+      <div class="info-card">
+        <h4> 📝 Exams & Assessments</h4>
+        <p>Prepare with subjective exams, mock oral vivas, online quizzes, paperless tests, and location-bound NBNSTIC-IT proctored MCQ exams.</p>
+      </div>
+      <div class="info-card">
+        <h4>🧘 Wellness & Growth</h4>
+        <p>Manage stress, cultivate digital wellness, build actionable study plans, and develop a strong growth mindset through curated video resources.</p>
+      </div>
+      <div class="info-card">
+        <h4> 💼 Career & Research</h4>
+        <p>Sharpen employability skills, crack technical interviews, explore research methodology, publish innovations, and learn about IPR & patents.</p>
+      </div>
+      <div class="info-card">
+        <h4> 🎮 Utilities & Games</h4>
+        <p>Explore productivity tools, dopamine-detox brain games, department automated workflows, and philosophy resources for a balanced student life.</p>
+      </div>
+      <div class="info-card">
+        <h4> 🔬 Special CS Topics</h4>
+        <p>Deep-dive into visualized algorithms, CS fundamentals, software engineering series, OS, DBMS, TOC, CG and mathematics through interactive tools.</p>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <div class="footer-brand">🌿 EcoSystem Portal 2026</div>
+  <div class="footer-links">
+    <a href="#">About Us</a>
+    <a href="#">Privacy Policy</a>
+    <a href="#">Terms of Use</a>
+    <a href="#">Contact - +91 8999226510</a>
+    <a href="#">Sitemap</a>
+  </div>
+  <div class="footer-copy">© 2026 EcoSystem | Designed by Prof. Rahul M. Samant | HOD-IT, NBNSTIC.</div>
+</footer>
+
+
+<button id="eco-chat-fab" title="Chat with EcoSystem Assistant" aria-label="Open chat">
+  <svg class="chat-icon" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+  </svg>
+  <svg class="close-icon" style="display:none" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
+  </svg>
+</button>
+
+<div id="eco-chat-panel" role="dialog" aria-label="EcoSystem Chat Assistant">
+  <div class="eco-chat-header">
+    <div class="eco-chat-avatar">🌿</div>
+    <div class="eco-chat-header-text">
+      <h4>EcoSystem Assistant</h4>
+      <span><span class="eco-status-dot"></span> Prof. Rahul M. Samant's Portal</span>
+    </div>
+    <button class="eco-chat-clear-btn" id="eco-clear-btn" title="Clear chat">↺ Clear</button>
+  </div>
+  <div id="eco-chat-messages" role="log" aria-live="polite"></div>
+  <div class="eco-chat-footer">
+    <textarea id="eco-chat-input" placeholder="Ask me anything about EcoSystem..." rows="1"></textarea>
+    <button id="eco-chat-send" disabled title="Send message">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="22" y1="2" x2="11" y2="13"></line>
+        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════
+   RESIZABLE PANELS
+══════════════════════════════════════════ */
+(function () {
+  const container  = document.getElementById('mainContainer');
+  const pLeft      = document.getElementById('panelLeft');
+  const pMid       = document.getElementById('panelMid');
+  const pRight     = document.getElementById('panelRight');
+  const div1       = document.getElementById('divider1');
+  const div2       = document.getElementById('divider2');
+  const DIVW       = 6;
+  const MIN_PX     = 120;
+
+  let wLeft = 320, wMid = 320;
+
+  function applyWidths() {
+    const total   = container.offsetWidth;
+    const wRight  = total - wLeft - wMid - DIVW * 2;
+    pLeft.style.width  = wLeft  + 'px';
+    pLeft.style.flexShrink = '0';
+    pLeft.style.flexGrow   = '0';
+    pMid.style.width   = wMid   + 'px';
+    pMid.style.flexShrink  = '0';
+    pMid.style.flexGrow    = '0';
+    pRight.style.flex  = '1';
+  }
+
+  applyWidths();
+  window.addEventListener('resize', applyWidths);
+
+  function makeDraggable(divider, onDrag) {
+    let startX = 0;
+    divider.addEventListener('mousedown', e => {
+      e.preventDefault();
+      startX = e.clientX;
+      divider.classList.add('dragging');
+      document.body.classList.add('col-resizing');
+
+      function onMove(e) {
+        const dx = e.clientX - startX;
+        startX = e.clientX;
+        onDrag(dx); applyWidths();
+      }
+      function onUp() {
+        divider.classList.remove('dragging');
+        document.body.classList.remove('col-resizing');
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup',   onUp);
+      }
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup',   onUp);
+    });
+  }
+
+  makeDraggable(div1, dx => {
+    const total  = container.offsetWidth;
+    const maxLeft = total - wMid - MIN_PX - DIVW * 2;
+    wLeft = Math.max(MIN_PX, Math.min(maxLeft, wLeft + dx));
+  });
+
+  makeDraggable(div2, dx => {
+    const total   = container.offsetWidth;
+    const maxMid  = total - wLeft - MIN_PX - DIVW * 2;
+    wMid = Math.max(MIN_PX, Math.min(maxMid, wMid + dx));
+  });
+})();
+
+/* ══════════════════════════════════════════
+   TREE BUILD (Dynamic extraction)
+══════════════════════════════════════════ */
+function makeRow(icon, text) {
+  const div = document.createElement('div');
+  div.className = 'node-row';
+  const tog = document.createElement('span');
+  tog.className = 'toggle-icon'; tog.textContent = '▶';
+  const lbl = document.createElement('span');
+  lbl.className = 'node-label'; lbl.textContent = `${icon} ${text}`;
+  div.appendChild(tog); div.appendChild(lbl);
+  return div;
+}
+
+function toggle(row, sub) {
+  const open = sub.classList.toggle('open');
+  const ic = row.querySelector('.toggle-icon');
+  if (ic) ic.style.transform = open ? 'rotate(90deg)' : 'rotate(0deg)';
+}
+
+const root = document.createElement('ul');
+const rootLi = document.createElement('li');
+const rootRow = makeRow('🌐','EcoSystem Portal');
+const rootSub = document.createElement('div');
+rootSub.className = 'sub-tree open'; // Opened by default
+rootRow.querySelector('.toggle-icon').style.transform = 'rotate(90deg)';
+
+rootRow.addEventListener('click', () => toggle(rootRow, rootSub));
+
+// Parse the hidden cards grid to build the tree
+const cards = document.querySelectorAll('#hidden-data-source .card');
+
+cards.forEach(card => {
+  const titleText = card.querySelector('.card-title').textContent.trim();
+  const iconText = card.querySelector('.icon').textContent.trim();
+  const links = card.querySelectorAll('.link-item');
+
+  const sLi  = document.createElement('li');
+  sLi.className = "category-node";
+  const sRow = makeRow(iconText, titleText);
+  const sSub = document.createElement('div');
+  sSub.className = 'sub-tree';
+  
+  sRow.addEventListener('click', e => { e.stopPropagation(); toggle(sRow, sSub); });
+  
+  const leafUl = document.createElement('ul');
+  links.forEach(link => {
+    const li = document.createElement('li');
+    li.className = "leaf-node";
+    const a  = document.createElement('a');
+    a.className = 'leaf-link';
+    a.href = link.href;
+    a.target = '_blank';
+    a.rel = "noopener noreferrer";
+    a.textContent = link.textContent.trim();
+    li.appendChild(a);
+    leafUl.appendChild(li);
+  });
+
+  sSub.appendChild(leafUl); 
+  sLi.appendChild(sRow); 
+  sLi.appendChild(sSub);
+  rootSub.appendChild(sLi);
+});
+
+rootLi.appendChild(rootRow); 
+rootLi.appendChild(rootSub); 
+root.appendChild(rootLi);
+document.getElementById('ecoTree').appendChild(root);
+
+/* ══════════════════════════════════════════
+   SEARCH FILTER LOGIC
+══════════════════════════════════════════ */
+const searchInput = document.getElementById('searchInput');
+
+searchInput.addEventListener('input', (e) => {
+    const term = e.target.value.toLowerCase().trim();
+    const categories = document.querySelectorAll('.category-node');
+    
+    categories.forEach(cat => {
+        let hasMatch = false;
+        const leaves = cat.querySelectorAll('.leaf-node');
+        
+        leaves.forEach(leaf => {
+            const text = leaf.textContent.toLowerCase();
+            if(term === "" || text.includes(term)) {
+                leaf.classList.remove('hidden-filter');
+                hasMatch = true;
+            } else {
+                leaf.classList.add('hidden-filter');
+            }
+        });
+
+        const subTree = cat.querySelector('.sub-tree');
+        const row = cat.querySelector('.node-row');
+
+        if(term !== "") {
+            if(hasMatch) {
+                cat.style.display = 'block';
+                // Auto-expand if not open
+                if(!subTree.classList.contains('open')) toggle(row, subTree);
+            } else {
+                cat.style.display = 'none';
+            }
+        } else {
+            // Reset to default
+            cat.style.display = 'block';
+            if(subTree.classList.contains('open')) toggle(row, subTree);
+        }
+    });
+
+    // Make sure root is open during search
+    if (term !== "" && !rootSub.classList.contains('open')) toggle(rootRow, rootSub);
+});
+
+
+/* ══════════════════════════════════════════
+   VOICE SEARCH
+══════════════════════════════════════════ */
+let recognition = null, listening = false;
+function toggleVoice() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { setStatus("⚠️ Voice not supported in this browser."); return; }
+  if (listening) { recognition.stop(); return; }
+  recognition = new SR();
+  recognition.lang = 'en-US'; recognition.interimResults = true;
+  recognition.onstart = () => {
+    listening = true;
+    document.getElementById('voiceBtn').classList.add('listening');
+    document.getElementById('voiceLabel').textContent = 'Stop';
+    setStatus("🎙 Listening… speak now");
+  };
+  recognition.onresult = e => {
+    const t = Array.from(e.results).map(r => r[0].transcript).join('');
+    document.getElementById('searchInput').value = t;
+    // Trigger the input event to run the filter logic
+    document.getElementById('searchInput').dispatchEvent(new Event('input'));
+    if (e.results[e.results.length-1].isFinal) setStatus(`✅ "${t}"`);
+  };
+  recognition.onerror = e => { setStatus(`⚠️ ${e.error}`); stopVoice(); };
+  recognition.onend   = () => stopVoice();
+  recognition.start();
+}
+function stopVoice() {
+  listening = false;
+  document.getElementById('voiceBtn').classList.remove('listening');
+  document.getElementById('voiceLabel').textContent = 'Voice';
+  setTimeout(() => setStatus(''), 3000);
+}
+function setStatus(m) { document.getElementById('voiceStatus').textContent = m; }
+
+/* ══════════════════════════════════════════
+   CHATBOT WIDGET SCRIPT
+══════════════════════════════════════════ */
+(function () {
+  const GROQ_API_KEY = "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";
+  const GROQ_MODEL   = "llama-3.3-70b-versatile";
+  const GROQ_URL     = "https://api.groq.com/openai/v1/chat/completions";
+
+  const SYSTEM_PROMPT = `You are the friendly AI assistant for EcoSystem 2026. Keep answers concise, helpful, and friendly. Guide students to the portal's resources.`;
+
+  let chatHistory = [];
+  let isProcessing = false;
+
+  const fab       = document.getElementById("eco-chat-fab");
+  const panel     = document.getElementById("eco-chat-panel");
+  const messages  = document.getElementById("eco-chat-messages");
+  const input     = document.getElementById("eco-chat-input");
+  const sendBtn   = document.getElementById("eco-chat-send");
+  const clearBtn  = document.getElementById("eco-clear-btn");
+
+  function appendMessage(role, html) {
+    const div = document.createElement("div");
+    div.className = "eco-msg " + role;
+    div.innerHTML = html;
+    messages.appendChild(div);
+    messages.scrollTop = messages.scrollHeight;
+    return div;
+  }
+
+  function showTyping() {
+    const el = document.createElement("div");
+    el.className = "eco-typing";
+    el.id = "eco-typing-indicator";
+    el.innerHTML = "<span></span><span></span><span></span>";
+    messages.appendChild(el);
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  function hideTyping() {
+    const el = document.getElementById("eco-typing-indicator");
+    if (el) el.remove();
+  }
+
+  function showChips(chips) {
+    const wrap = document.createElement("div");
+    wrap.className = "eco-chips";
+    chips.forEach(text => {
+      const btn = document.createElement("button");
+      btn.className = "eco-chip";
+      btn.textContent = text;
+      btn.onclick = () => { wrap.remove(); sendMessage(text); };
+      wrap.appendChild(btn);
+    });
+    messages.appendChild(wrap);
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  function showWelcome() {
+    messages.innerHTML = "";
+    appendMessage("bot", "👋 <strong>Welcome to EcoSystem!</strong><br>I'm your AI guide for Prof. Rahul M. Samant's portal. Need help finding study resources or exams?");
+    showChips(["📚 Study resources", "📝 Submit assignments", "🗓️ Timetable", "💼 Career"]);
+    chatHistory = [];
+  }
+
+  async function callGroq(userText) {
+    chatHistory.push({ role: "user", content: userText });
+    const response = await fetch(GROQ_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + GROQ_API_KEY },
+      body: JSON.stringify({
+        model: GROQ_MODEL, max_tokens: 700, temperature: 0.65,
+        messages: [{ role: "system", content: SYSTEM_PROMPT }, ...chatHistory]
+      })
+    });
+    if (!response.ok) throw new Error("API error " + response.status);
+    const data = await response.json();
+    const reply = data.choices?.[0]?.message?.content || "Sorry, I couldn't generate a response.";
+    chatHistory.push({ role: "assistant", content: reply });
+    if (chatHistory.length > 16) chatHistory = chatHistory.slice(-16);
+    return reply;
+  }
+
+  async function sendMessage(text) {
+    text = (text || input.value).trim();
+    if (!text || isProcessing) return;
+    isProcessing = true; sendBtn.disabled = true; input.value = ""; input.style.height = "auto";
+    appendMessage("user", text);
+    showTyping();
+    try {
+      const reply = await callGroq(text);
+      hideTyping();
+      appendMessage("bot", reply);
+    } catch (err) {
+      hideTyping();
+      appendMessage("bot", "⚠️ <strong>Oops!</strong> Please check your connection.");
+    }
+    isProcessing = false; sendBtn.disabled = input.value.trim() === ""; input.focus();
+  }
+
+  fab.addEventListener("click", () => {
+    const isOpen = panel.classList.toggle("visible");
+    fab.classList.toggle("open", isOpen);
+    if (isOpen) { if (!messages.children.length) showWelcome(); setTimeout(() => input.focus(), 300); }
+  });
+
+  clearBtn.addEventListener("click", showWelcome);
+  input.addEventListener("input", function () {
+    sendBtn.disabled = this.value.trim() === "" || isProcessing;
+    this.style.height = "auto"; this.style.height = Math.min(this.scrollHeight, 110) + "px";
+  });
+  input.addEventListener("keydown", function (e) {
+    if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); if (!sendBtn.disabled) sendMessage(); }
+  });
+  sendBtn.addEventListener("click", () => sendMessage());
+})();
+</script>
+</body>
+</html>
