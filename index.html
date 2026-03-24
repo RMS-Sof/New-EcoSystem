@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>EcoSystem 2026 | Portal</title>
+  <title>EcoSystem-DeskTop | IT Study Portal</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
   <style>
     /* ══════════════════════════════════════════════════════
@@ -323,6 +323,49 @@
     }
     .eco-chat-clear-btn:hover { color: #fff; background: rgba(255,255,255,0.15); }
 
+    /* ── API KEY MODAL ───────────────────────────────────────── */
+    #eco-apikey-overlay {
+      position: fixed; inset: 0; z-index: 10000;
+      background: rgba(45,74,34,0.55); backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity .25s;
+    }
+    #eco-apikey-overlay.visible { opacity: 1; pointer-events: all; }
+    #eco-apikey-modal {
+      background: var(--white); border-radius: 16px; padding: 1.8rem 1.6rem;
+      width: min(420px, 92vw); box-shadow: 0 20px 60px rgba(45,74,34,0.35);
+      display: flex; flex-direction: column; gap: 1rem;
+      transform: scale(.92) translateY(12px); transition: transform .25s;
+    }
+    #eco-apikey-overlay.visible #eco-apikey-modal { transform: scale(1) translateY(0); }
+    .apikey-modal-icon { font-size: 2rem; text-align: center; }
+    .apikey-modal-title { font-family: 'Playfair Display', serif; font-size: 1.15rem; font-weight: 700; color: var(--moss); text-align: center; }
+    .apikey-modal-desc { font-size: .82rem; color: var(--soil); text-align: center; line-height: 1.6; }
+    .apikey-modal-desc a { color: var(--fern); }
+    #eco-apikey-input {
+      width: 100%; padding: .65rem .85rem; border: 1.5px solid var(--sage);
+      border-radius: 10px; font-size: .88rem; color: var(--bark);
+      font-family: 'DM Sans', sans-serif; outline: none; transition: border-color .2s;
+      background: var(--mist);
+    }
+    #eco-apikey-input:focus { border-color: var(--fern); background: var(--white); }
+    #eco-apikey-input::placeholder { color: #aab; letter-spacing: .5px; }
+    .apikey-modal-actions { display: flex; gap: .6rem; }
+    #eco-apikey-save {
+      flex: 1; background: linear-gradient(135deg, var(--fern), var(--moss));
+      color: var(--white); border: none; border-radius: 10px; padding: .65rem;
+      font-family: 'DM Sans', sans-serif; font-size: .88rem; font-weight: 600;
+      cursor: pointer; transition: opacity .2s;
+    }
+    #eco-apikey-save:hover { opacity: .88; }
+    #eco-apikey-cancel {
+      background: var(--mist); color: var(--soil); border: 1px solid #d5e8d0;
+      border-radius: 10px; padding: .65rem 1rem;
+      font-family: 'DM Sans', sans-serif; font-size: .88rem; cursor: pointer; transition: background .2s;
+    }
+    #eco-apikey-cancel:hover { background: #ddecd8; }
+    .apikey-error { color: #c0392b; font-size: .78rem; text-align: center; min-height: 1em; }
+
     #eco-chat-messages {
       flex: 1; overflow-y: auto; padding: 16px 14px;
       display: flex; flex-direction: column; gap: 10px; background: #f9fbf8;
@@ -516,6 +559,24 @@
 </footer>
 
 
+<!-- API Key Modal -->
+<div id="eco-apikey-overlay" role="dialog" aria-modal="true" aria-labelledby="apikey-title">
+  <div id="eco-apikey-modal">
+    <div class="apikey-modal-icon">🔑</div>
+    <div class="apikey-modal-title" id="apikey-title">Enter your Groq API Key</div>
+    <div class="apikey-modal-desc">
+      Your key is saved only in your browser (<code>localStorage</code>) and is never shared.<br>
+      Get a free key at <a href="https://console.groq.com/keys" target="_blank" rel="noopener">console.groq.com/keys</a>.
+    </div>
+    <input id="eco-apikey-input" type="password" placeholder="gsk_••••••••••••••••••••••••" autocomplete="off" spellcheck="false" />
+    <div class="apikey-error" id="eco-apikey-error"></div>
+    <div class="apikey-modal-actions">
+      <button id="eco-apikey-cancel">Cancel</button>
+      <button id="eco-apikey-save">Save &amp; Continue</button>
+    </div>
+  </div>
+</div>
+
 <button id="eco-chat-fab" title="Chat with EcoSystem Assistant" aria-label="Open chat">
   <svg class="chat-icon" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
@@ -532,6 +593,7 @@
       <h4>EcoSystem Assistant</h4>
       <span><span class="eco-status-dot"></span> Prof. Rahul M. Samant's Portal</span>
     </div>
+    <button class="eco-chat-clear-btn" id="eco-key-btn" title="Update API Key">🔑</button>
     <button class="eco-chat-clear-btn" id="eco-clear-btn" title="Clear chat">↺ Clear</button>
   </div>
   <div id="eco-chat-messages" role="log" aria-live="polite"></div>
@@ -769,22 +831,73 @@ function setStatus(m) { document.getElementById('voiceStatus').textContent = m; 
    CHATBOT WIDGET SCRIPT
 ══════════════════════════════════════════ */
 (function () {
-  const GROQ_API_KEY = "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";
   const GROQ_MODEL   = "llama-3.3-70b-versatile";
   const GROQ_URL     = "https://api.groq.com/openai/v1/chat/completions";
+  const LS_KEY       = "ecosys_groq_api_key";
 
   const SYSTEM_PROMPT = `You are the friendly AI assistant for EcoSystem 2026. Keep answers concise, helpful, and friendly. Guide students to the portal's resources.`;
 
-  let chatHistory = [];
-  let isProcessing = false;
+  let chatHistory   = [];
+  let isProcessing  = false;
 
-  const fab       = document.getElementById("eco-chat-fab");
-  const panel     = document.getElementById("eco-chat-panel");
-  const messages  = document.getElementById("eco-chat-messages");
-  const input     = document.getElementById("eco-chat-input");
-  const sendBtn   = document.getElementById("eco-chat-send");
-  const clearBtn  = document.getElementById("eco-clear-btn");
+  /* ── DOM refs ─────────────────────────────────────────────── */
+  const fab        = document.getElementById("eco-chat-fab");
+  const panel      = document.getElementById("eco-chat-panel");
+  const messages   = document.getElementById("eco-chat-messages");
+  const input      = document.getElementById("eco-chat-input");
+  const sendBtn    = document.getElementById("eco-chat-send");
+  const clearBtn   = document.getElementById("eco-clear-btn");
+  const keyBtn     = document.getElementById("eco-key-btn");
 
+  const overlay    = document.getElementById("eco-apikey-overlay");
+  const keyInput   = document.getElementById("eco-apikey-input");
+  const saveBtn    = document.getElementById("eco-apikey-save");
+  const cancelBtn  = document.getElementById("eco-apikey-cancel");
+  const keyError   = document.getElementById("eco-apikey-error");
+
+  /* ── API key helpers ──────────────────────────────────────── */
+  function getKey()       { return localStorage.getItem(LS_KEY) || ""; }
+  function saveKey(k)     { localStorage.setItem(LS_KEY, k.trim()); }
+  function hasKey()       { return getKey().length > 0; }
+
+  /* ── Modal open / close ───────────────────────────────────── */
+  let _afterSave = null; // callback to run after key is saved
+
+  function openKeyModal(afterSave) {
+    _afterSave = afterSave || null;
+    keyError.textContent = "";
+    keyInput.value = getKey(); // pre-fill if key already exists
+    overlay.classList.add("visible");
+    setTimeout(() => keyInput.focus(), 200);
+  }
+
+  function closeKeyModal() {
+    overlay.classList.remove("visible");
+    keyInput.value = "";
+    keyError.textContent = "";
+  }
+
+  saveBtn.addEventListener("click", () => {
+    const val = keyInput.value.trim();
+    if (!val || !val.startsWith("gsk_")) {
+      keyError.textContent = "⚠️ Key must start with gsk_ — check and try again.";
+      keyInput.focus();
+      return;
+    }
+    saveKey(val);
+    closeKeyModal();
+    if (typeof _afterSave === "function") _afterSave();
+  });
+
+  cancelBtn.addEventListener("click", closeKeyModal);
+
+  // Also close on overlay backdrop click
+  overlay.addEventListener("click", e => { if (e.target === overlay) closeKeyModal(); });
+
+  // Allow Enter key in modal input
+  keyInput.addEventListener("keydown", e => { if (e.key === "Enter") saveBtn.click(); });
+
+  /* ── Chat helpers ─────────────────────────────────────────── */
   function appendMessage(role, html) {
     const div = document.createElement("div");
     div.className = "eco-msg " + role;
@@ -829,16 +942,22 @@ function setStatus(m) { document.getElementById('voiceStatus').textContent = m; 
     chatHistory = [];
   }
 
+  /* ── Groq API call ────────────────────────────────────────── */
   async function callGroq(userText) {
     chatHistory.push({ role: "user", content: userText });
     const response = await fetch(GROQ_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + GROQ_API_KEY },
+      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + getKey() },
       body: JSON.stringify({
         model: GROQ_MODEL, max_tokens: 700, temperature: 0.65,
         messages: [{ role: "system", content: SYSTEM_PROMPT }, ...chatHistory]
       })
     });
+    if (response.status === 401) {
+      // Invalid key — clear it and prompt again
+      localStorage.removeItem(LS_KEY);
+      throw new Error("invalid_key");
+    }
     if (!response.ok) throw new Error("API error " + response.status);
     const data = await response.json();
     const reply = data.choices?.[0]?.message?.content || "Sorry, I couldn't generate a response.";
@@ -847,9 +966,17 @@ function setStatus(m) { document.getElementById('voiceStatus').textContent = m; 
     return reply;
   }
 
+  /* ── Send message ─────────────────────────────────────────── */
   async function sendMessage(text) {
     text = (text || input.value).trim();
     if (!text || isProcessing) return;
+
+    // Guard: require API key before sending
+    if (!hasKey()) {
+      openKeyModal(() => sendMessage(text));
+      return;
+    }
+
     isProcessing = true; sendBtn.disabled = true; input.value = ""; input.style.height = "auto";
     appendMessage("user", text);
     showTyping();
@@ -859,18 +986,39 @@ function setStatus(m) { document.getElementById('voiceStatus').textContent = m; 
       appendMessage("bot", reply);
     } catch (err) {
       hideTyping();
-      appendMessage("bot", "⚠️ <strong>Oops!</strong> Please check your connection.");
+      if (err.message === "invalid_key") {
+        appendMessage("bot", "🔑 <strong>Invalid API key.</strong> Please enter a valid Groq key.");
+        openKeyModal(() => sendMessage(text));
+      } else {
+        appendMessage("bot", "⚠️ <strong>Oops!</strong> Please check your connection and try again.");
+      }
     }
     isProcessing = false; sendBtn.disabled = input.value.trim() === ""; input.focus();
   }
 
+  /* ── FAB & panel ──────────────────────────────────────────── */
   fab.addEventListener("click", () => {
     const isOpen = panel.classList.toggle("visible");
     fab.classList.toggle("open", isOpen);
-    if (isOpen) { if (!messages.children.length) showWelcome(); setTimeout(() => input.focus(), 300); }
+    if (isOpen) {
+      if (!messages.children.length) {
+        // Prompt for key on very first open if not set
+        if (!hasKey()) {
+          showWelcome();
+          openKeyModal();
+        } else {
+          showWelcome();
+        }
+      }
+      setTimeout(() => input.focus(), 300);
+    }
   });
 
+  /* ── Header buttons ───────────────────────────────────────── */
   clearBtn.addEventListener("click", showWelcome);
+  keyBtn.addEventListener("click", () => openKeyModal());
+
+  /* ── Input behaviour ──────────────────────────────────────── */
   input.addEventListener("input", function () {
     sendBtn.disabled = this.value.trim() === "" || isProcessing;
     this.style.height = "auto"; this.style.height = Math.min(this.scrollHeight, 110) + "px";
